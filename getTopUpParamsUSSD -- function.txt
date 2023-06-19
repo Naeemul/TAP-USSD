@@ -1,0 +1,78 @@
+if (!function_exists('getTopUpParamsUSSD')) {
+   
+    function getTopUpParamsUSSD(string $mobileNumber, string $ssv): array
+    {
+        $matches = explode(' ', $ssv); 
+        // print_r($matches);
+        if (!empty($matches)) {
+            if(count($matches) == 9){
+				 $connectionType = "";
+                 $operator = "";
+                if($matches[0] == "1"){
+                    $operator = "GrameenPhone";
+                    if (  $matches[2] == "3" ){
+                        $connectionType = "Skitto";
+                    }
+                    else  if ( $matches[2] == "2" ){
+					    $connectionType = "Postpaid";
+                    } 
+                    else if ($matches[2] == "1" ){
+                        $connectionType = "Prepaid";
+                    }
+                } 
+                else if($matches[0] == "2"){					
+					$operator =  "Banglalink";                           
+                    if ( $matches[2] == "2" ){                      
+					    $connectionType = "Postpaid";
+                    } 
+                    else if ($matches[2] == "1" ){
+                        $connectionType = "Prepaid";
+                    }						   
+			    }
+                else if($matches[0] == "3"){
+					 $operator =  "Robi";
+                    if ( $matches[2] == "2" ){                      
+					    $connectionType = "Postpaid";
+                    } 
+                    else if ($matches[2] == "1" ){
+                        $connectionType = "Prepaid";
+                    }
+			    }
+                else if($matches[0] == "4"){ 
+					$operator =  "Airtel";
+					if ( $matches[2] == "2" ){                      
+					    $connectionType = "Postpaid";
+                    } 
+                    else if ($matches[2] == "1" ){
+                        $connectionType = "Prepaid";
+                    }           
+			    }
+                else if($matches[0] == "5"){
+					$operator =  "Teletalk";          
+					if ( $matches[2] == "2" ){                      
+					    $connectionType = "Postpaid";
+                    } 
+                    else if ($matches[2] == "1" ){
+                        $connectionType = "Prepaid";
+                    }			   
+			    }
+
+				return [
+                    'accountNumber' => $mobileNumber,
+                    "amount" => floatval($matches[6]),
+                    "connectionType" => $connectionType,
+                    "operator" => $operator,
+                    "pin"=> base64_encode($matches[8]),
+                    "recipientNumber"=> substr($matches[4], -11),
+                    "requestTime"=> floor(microtime(true) * 1000),
+                    "requestChannel" => "USSD",
+                    "isBundle" => false
+                ];
+            } 
+            else{
+                return 'Invalid input. Please try again.';
+            }
+        }
+        return [];
+    }
+}
